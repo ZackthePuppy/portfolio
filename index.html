@@ -405,22 +405,47 @@
     </script>
     <script>
       async function updateVisitorCounter() {
-        try {
 
-          const response = await fetch(
-            "https://ztp.virusdetected213123.workers.dev/"
-          );
+        const workerUrl =
+          "https://ztp.virusdetected213123.workers.dev/";
+
+        try {
+          let visitorId =
+            localStorage.getItem("portfolio_visitor_id");
+
+          if (!visitorId) {
+
+            visitorId =
+              crypto.randomUUID();
+
+            localStorage.setItem(
+              "portfolio_visitor_id",
+              visitorId
+            );
+          }
+          const response = await fetch(workerUrl, {
+            method: "GET",
+            headers: {
+              "X-Visitor-ID": visitorId
+            }
+          });
 
           if (!response.ok) {
-            throw new Error("Counter request failed");
+            throw new Error(
+              "Visitor counter request failed"
+            );
           }
 
           const data = await response.json();
 
-          document.getElementById("total-visits").textContent =
+          document.getElementById(
+            "total-visits"
+          ).textContent =
             data.total.toLocaleString();
 
-          document.getElementById("today-visits").textContent =
+          document.getElementById(
+            "today-visits"
+          ).textContent =
             data.today.toLocaleString();
 
         } catch (error) {
@@ -429,7 +454,6 @@
             "Visitor counter error:",
             error
           );
-
         }
       }
 
